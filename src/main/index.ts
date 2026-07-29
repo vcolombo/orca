@@ -299,11 +299,15 @@ import { preserveAgentAuthBeforeRestart } from './agent-auth-restart-preservatio
 import { CliInstaller } from './cli/cli-installer'
 import { installLinuxBareOrcaDispatcher } from './cli/linux-bare-orca-dispatcher'
 import { reconcileManagedWslCliRegistrations } from './cli/wsl-cli-registration-reconciliation'
+import { CodexMicroCoordinator } from './codex-micro/coordinator'
+import { registerCodexMicroIpc } from './codex-micro/ipc'
 
 let mainWindow: BrowserWindow | null = null
 /** Whether a manual app.quit() (Cmd+Q) is in progress; lets the close handler skip the running-process confirmation and go straight to close. */
 let isQuitting = false
 let store: Store | null = null
+let codexMicroCoordinator: CodexMicroCoordinator | null = null
+let unregisterCodexMicroIpc: (() => void) | null = null
 let stats: StatsCollector | null = null
 let claudeUsage: ClaudeUsageStore | null = null
 let codexUsage: CodexUsageStore | null = null
@@ -2003,6 +2007,11 @@ void app.whenReady().then(async () => {
   store = new Store({ dataFile: activeOrcaProfile.dataFile })
   wslHookRelayManager.setManagedHookSettingsResolver(() => store?.getSettings() ?? null)
   logStartupMilestone('store-loaded')
+  if (!isServeMode) {
+    codexMicroCoordinator = new CodexMicroCoordinator({ store })
+    unregisterCodexMicroIpc = registerCodexMicroIpc(codexMicroCoordinator)
+    codexMicroCoordinator.start()
+  }
   // Why: apply initial fallback WSL distro from store settings for global git/CLI calls.
   setDefaultWslDistroOverride(store.getSettings().terminalWindowsWslDistro ?? null)
   store.onSettingsChanged((updates, settings) => {
@@ -2882,6 +2891,10 @@ app.on('before-quit', () => {
     })
   }
   isQuitting = true
+  unregisterCodexMicroIpc?.()
+  unregisterCodexMicroIpc = null
+  codexMicroCoordinator?.dispose()
+  codexMicroCoordinator = null
   desktopRelayService?.fenceAndCloseNow()
   runtimeRpc?.setMobileRelayPairingProvider(null)
   unsubscribeSystemResumeBroadcast?.()

@@ -60,6 +60,20 @@ const winSpeechNativeResource = {
   from: 'node_modules/sherpa-onnx-win-x64',
   to: 'node_modules/sherpa-onnx-win-x64'
 }
+const codexMicroResources = {
+  win32: {
+    from: 'native/codex-micro/dist/win32-${arch}/codex-micro.exe',
+    to: 'codex-micro/codex-micro.exe'
+  },
+  darwin: {
+    from: 'native/codex-micro/dist/darwin-${arch}/codex-micro',
+    to: 'codex-micro/codex-micro'
+  },
+  linux: {
+    from: 'native/codex-micro/dist/linux-${arch}/codex-micro',
+    to: 'codex-micro/codex-micro'
+  }
+}
 
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
@@ -262,6 +276,7 @@ module.exports = {
       ...commonExtraResources,
       ...createPackagedRuntimeNodeModuleResources('win32'),
       winSpeechNativeResource,
+      codexMicroResources.win32,
       {
         from: 'resources/win32/bin/orca.cmd',
         to: 'bin/orca.cmd'
@@ -326,6 +341,7 @@ module.exports = {
       ...commonExtraResources,
       ...createPackagedRuntimeNodeModuleResources('darwin'),
       macSpeechNativeResource,
+      codexMicroResources.darwin,
       {
         from: 'resources/darwin/bin/orca',
         to: 'bin/orca'
@@ -390,6 +406,7 @@ module.exports = {
       ...commonExtraResources,
       ...createPackagedRuntimeNodeModuleResources('linux'),
       linuxSpeechNativeResource,
+      codexMicroResources.linux,
       {
         from: 'resources/linux/bin/orca-ide',
         to: 'bin/orca-ide'
@@ -470,13 +487,16 @@ function chmodUnixCliLaunchers(resourcesDir, electronPlatformName) {
   if (electronPlatformName === 'win32') {
     return
   }
-  for (const launcherName of ['orca', 'orca-ide']) {
-    const launcherPath = join(resourcesDir, 'bin', launcherName)
+  const launcherPaths = [
+    join(resourcesDir, 'bin', 'orca'),
+    join(resourcesDir, 'bin', 'orca-ide'),
+    join(resourcesDir, 'codex-micro', 'codex-micro')
+  ]
+  for (const launcherPath of launcherPaths) {
     if (!existsSync(launcherPath)) {
       continue
     }
-    // Why: packaged Unix installs expose these extraResources as public shell
-    // commands, and source/packager mode drift must not ship a non-executable CLI.
+    // Why: packaged Unix resources invoked via child_process must retain executable mode.
     chmodSync(launcherPath, 0o755)
   }
 }
