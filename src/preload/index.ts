@@ -197,6 +197,7 @@ import type {
   AutomationUpdateInput
 } from '../shared/automations-types'
 import type { KeybindingActionId, KeybindingFileSnapshot } from '../shared/keybindings'
+import type { CodexMicroConnectionState, CodexMicroInputEvent } from '../shared/codex-micro-types'
 import type { AiVaultListArgs, AiVaultSubagentListArgs } from '../shared/ai-vault-types'
 import type { AiVaultPrepareSessionResumeArgs } from '../shared/ai-vault-resume-preparation'
 import type { AgentType } from '../shared/native-chat-types'
@@ -1950,6 +1951,30 @@ const api = {
       return () => ipcRenderer.removeListener('settings:changed', listener)
     }
   },
+
+  codexMicro: {
+    getState: (): Promise<CodexMicroConnectionState> => ipcRenderer.invoke('codexMicro:getState'),
+    subscribeState: (callback: (state: CodexMicroConnectionState) => void): (() => void) => {
+      const listener = (
+        _event: Electron.IpcRendererEvent,
+        state: CodexMicroConnectionState
+      ): void => callback(state)
+      ipcRenderer.on('codexMicro:state', listener)
+      return () => ipcRenderer.removeListener('codexMicro:state', listener)
+    },
+    subscribeInput: (callback: (event: CodexMicroInputEvent) => void): (() => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, input: CodexMicroInputEvent): void =>
+        callback(input)
+      ipcRenderer.on('codexMicro:input', listener)
+      return () => ipcRenderer.removeListener('codexMicro:input', listener)
+    },
+    setOutputSnapshot: (args: {
+      rgbcfg: Record<string, unknown>
+      thstatus: unknown[]
+    }): Promise<void> => ipcRenderer.invoke('codexMicro:setOutputSnapshot', args),
+    retry: (): Promise<void> => ipcRenderer.invoke('codexMicro:retry'),
+    release: (): Promise<void> => ipcRenderer.invoke('codexMicro:release')
+  } satisfies PreloadApi['codexMicro'],
 
   localhostWorktreeLabels: {
     register: (args: LocalhostWorktreeLabelRoute): Promise<LocalhostWorktreeLabelResult> =>

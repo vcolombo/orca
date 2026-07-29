@@ -2,6 +2,8 @@
 
 import { spawnSync } from 'node:child_process'
 
+runNodeScript('config/scripts/build-codex-micro-sidecar.mjs')
+
 if (process.platform === 'win32') {
   runNodeScript('config/scripts/build-windows-cli-launcher.mjs')
   process.exit(0)

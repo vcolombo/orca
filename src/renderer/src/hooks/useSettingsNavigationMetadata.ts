@@ -66,6 +66,7 @@ import { getMobileSettingsPaneSearchEntries } from '@/components/settings/mobile
 import { getMobileEmulatorSearchEntries } from '@/components/settings/mobile-emulator-search'
 import { getComputerUsePaneSearchEntries } from '@/components/settings/computer-use-search'
 import { getVoicePaneSearchEntries } from '@/components/settings/voice-pane-search'
+import { getCodexMicroSearchEntries } from '@/components/settings/codex-micro-search'
 import { getDeveloperPermissionsPaneSearchEntries } from '@/components/settings/developer-permissions-search'
 import { getPrivacyPaneSearchEntries } from '@/components/settings/privacy-search'
 import { getAdvancedPaneSearchEntries } from '@/components/settings/advanced-search'
@@ -214,6 +215,21 @@ export function buildSettingsNavigationMetadata({
             icon: MousePointerClick,
             searchEntries: getComputerUsePaneSearchEntries(),
             group: 'capabilities'
+          },
+          {
+            id: 'codex-micro',
+            title: translate(
+              'auto.hooks.useSettingsNavigationMetadata.codexMicroTitle',
+              'Codex Micro'
+            ),
+            description: translate(
+              'auto.hooks.useSettingsNavigationMetadata.codexMicroDescription',
+              'Use and customize the Work Louder Codex Micro controller.'
+            ),
+            icon: Cable,
+            searchEntries: getCodexMicroSearchEntries(),
+            group: 'capabilities',
+            badge: translate('auto.components.settings.codexMicro.experimental', 'Experimental')
           },
           {
             id: 'voice',

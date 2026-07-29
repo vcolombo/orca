@@ -183,6 +183,7 @@ import {
 } from '../../shared/keybindings'
 import { PLUGIN_COMMAND_ALIAS_ACTION_IDS } from '../../shared/plugins/plugin-command-actions'
 import { registerAppCommandDispatcher } from '@/lib/app-command-dispatch'
+import { dispatchCodexMicroInput } from '@/lib/codex-micro-command-dispatch'
 import { executePluginCommand } from '@/lib/plugin-command-execution'
 import { findPluginCommandForKeybinding } from '@/lib/plugin-command-keybindings'
 import { usePluginCommands } from '@/store/plugin-panels'
@@ -1504,6 +1505,7 @@ function App(): React.JSX.Element {
     floatingVisibleTabCount,
     keybindings,
     pluginCommands,
+    codexMicroSettings: settings?.codexMicro,
     terminalShortcutPolicy: settings?.terminalShortcutPolicy,
     setFloatingTerminalOpenWithFocus,
     workspaceChromeActive,
@@ -1519,6 +1521,7 @@ function App(): React.JSX.Element {
     floatingVisibleTabCount,
     keybindings,
     pluginCommands,
+    codexMicroSettings: settings?.codexMicro,
     terminalShortcutPolicy: settings?.terminalShortcutPolicy,
     setFloatingTerminalOpenWithFocus,
     workspaceChromeActive,
@@ -1717,6 +1720,12 @@ function App(): React.JSX.Element {
     const unregisterAppCommandDispatcher = registerAppCommandDispatcher((actionId) =>
       (createRegisteredCommandHandlers().get(actionId) ?? (() => false))()
     )
+    const unsubscribeCodexMicroInput = window.api.codexMicro?.subscribeInput((event) => {
+      const deviceSettings = globalShortcutStateRef.current.codexMicroSettings
+      if (deviceSettings) {
+        dispatchCodexMicroInput(event, deviceSettings)
+      }
+    })
 
     const dispatchShortcutInput = (input: ShortcutDispatchInput): void => {
       const {
@@ -1944,6 +1953,7 @@ function App(): React.JSX.Element {
     window.addEventListener('keyup', onKeyUp, { capture: true })
     window.addEventListener('blur', onBlur)
     return () => {
+      unsubscribeCodexMicroInput?.()
       unregisterAppCommandDispatcher()
       window.removeEventListener('keydown', onKeyDown, { capture: true })
       window.removeEventListener('keyup', onKeyUp, { capture: true })
