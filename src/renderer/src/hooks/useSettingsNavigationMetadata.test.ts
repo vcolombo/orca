@@ -38,13 +38,18 @@ describe('settings navigation metadata', () => {
       'accounts',
       'orchestration',
       'computer-use',
+      'codex-micro',
       'voice',
       'setup-guide',
       'general',
       'integrations',
-      'mobile',
-      'git'
+      'mobile'
     ])
+  })
+
+  it('keeps Codex Micro desktop-only', () => {
+    expect(ids()).toContain('codex-micro')
+    expect(ids({ isWebClient: true })).not.toContain('codex-micro')
   })
 
   it('adds the Linear capability section right after Orchestration only when connected', () => {

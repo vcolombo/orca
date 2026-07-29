@@ -29,6 +29,7 @@ import type {
 import type { ReadClipboardTextOptions } from '../shared/clipboard-text'
 import type { AppIdentity } from '../shared/app-identity'
 import type { ReleaseChannel } from '../shared/release-channel'
+import type { CodexMicroConnectionState, CodexMicroInputEvent } from '../shared/codex-micro-types'
 import type {
   HostQualifiedDetectedWorktreeResult,
   LegacyDetectedWorktreeRequest,
@@ -2349,6 +2350,17 @@ export type PreloadApi = {
     previewWarpThemeImport: (source: WarpThemeImportSource) => Promise<WarpThemeImportPreview>
     /** Subscribe to out-of-band settings updates (e.g. View > Appearance toggles) to stay in sync with main. */
     onChanged: (callback: (updates: Partial<GlobalSettings>) => void) => () => void
+  }
+  codexMicro: {
+    getState: () => Promise<CodexMicroConnectionState>
+    subscribeState: (callback: (state: CodexMicroConnectionState) => void) => () => void
+    subscribeInput: (callback: (event: CodexMicroInputEvent) => void) => () => void
+    setOutputSnapshot: (args: {
+      rgbcfg: Record<string, unknown>
+      thstatus: unknown[]
+    }) => Promise<void>
+    retry: () => Promise<void>
+    release: () => Promise<void>
   }
   localhostWorktreeLabels: {
     register: (args: LocalhostWorktreeLabelRoute) => Promise<LocalhostWorktreeLabelResult>
