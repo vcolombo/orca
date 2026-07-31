@@ -221,12 +221,20 @@ jobs:
   package:
     name: package
     runs-on: ubuntu-latest
+    needs:
+      - codex-micro-linux-floor
 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Download Codex Micro sidecar
+        uses: actions/download-artifact@v8
+        with:
+          name: codex-micro-linux-x64-pr
+          path: native/codex-micro/dist/linux-x64
 
       - name: Cache electron-builder downloads
         uses: actions/cache@v5
@@ -263,6 +271,8 @@ jobs:
         run: pnpm run build:web-from-renderer
 
       - name: Build native components
+        env:
+          ORCA_CODEX_MICRO_PREBUILT: '1'
         run: pnpm run build:native
 
       - name: Package unpacked app
@@ -351,6 +361,14 @@ jobs:
 
       - name: Build and verify sidecar
         run: node config/scripts/build-codex-micro-sidecar.mjs
+
+      - name: Upload sidecar
+        uses: actions/upload-artifact@v7
+        with:
+          name: codex-micro-linux-x64-pr
+          path: native/codex-micro/dist/linux-x64/codex-micro
+          if-no-files-found: error
+          retention-days: 1
 
   # Why: regression specs under tests/e2e/** used to merge green without ever
   # running — e2e.yml only fired on schedule/release (#10518). Path-filter so
