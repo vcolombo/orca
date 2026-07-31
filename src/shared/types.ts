@@ -10,6 +10,7 @@ import type {
   MigrationUnsupportedPtyEntry
 } from './agent-status-types'
 import type { VoiceSettings } from './speech-types'
+import type { CodexMicroSettings } from './codex-micro-settings'
 import type { WorkspaceCleanupUIState } from './workspace-cleanup'
 import type { LargeDiffRenderLimit } from './large-diff-render-limit'
 import type { GitLabProjectSettings } from './gitlab-types'
@@ -2994,6 +2995,8 @@ export type GlobalSettings = {
   tabSwitchKeybindingSeed?: 'pending' | 'done'
   /** Local voice/dictation config. Optional for pre-voice profiles; getDefaultSettings() hydrates defaults via the persistence merge. */
   voice?: VoiceSettings
+  /** Codex Micro USB device settings. Optional for pre-device profiles; normalized at the settings:set IPC boundary before persistence. */
+  codexMicro?: CodexMicroSettings
 }
 
 export type OrcaWorkspaceLayout = {

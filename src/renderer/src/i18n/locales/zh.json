@@ -742,7 +742,9 @@
         "pluginsDescription": "安装和管理实验性 Orca 插件。",
         "projectHostsSummary": "{{value0}} 个主机",
         "linearTitle": "Linear",
-        "linearDescription": "Give agents the skill to read and update your linked Linear tickets."
+        "linearDescription": "Give agents the skill to read and update your linked Linear tickets.",
+        "codexMicroTitle": "Codex Micro",
+        "codexMicroDescription": "Use and customize the Work Louder Codex Micro controller."
       },
       "useAppMenuPaste": {
         "pasteTooLarge": "粘贴内容过大。"
@@ -6633,7 +6635,9 @@
           "dev": "开发工具",
           "devDescription": "仅用于调试 UI 状态的开发工具。",
           "linearTitle": "Linear",
-          "linearDescription": "Give agents the skill to read and update your linked Linear tickets."
+          "linearDescription": "Give agents the skill to read and update your linked Linear tickets.",
+          "codexMicroTitle": "Codex Micro",
+          "codexMicroDescription": "Use and customize the Work Louder Codex Micro controller."
         },
         "SettingsFormControls": {
           "42a4d15a30": "没有匹配的字体。",
@@ -9722,6 +9726,39 @@
           "serviceManagerHelp": "Update Orca through the service manager that starts this server.",
           "unpackedHelp": "Development builds must be updated from their source checkout.",
           "legacyHelp": "Update this server manually once to enable remote updates."
+        },
+        "codexMicro": {
+          "experimental": "Experimental",
+          "useWithOrca": "Use with Orca",
+          "retry": "Retry",
+          "release": "Release",
+          "diagnostics": "Diagnostics",
+          "lighting": "Lighting",
+          "lightingDescription": "Enable device lighting on known writable firmware.",
+          "brightness": "Brightness",
+          "idleTimeout": "Lighting idle timeout",
+          "idleTimeoutDescription": "Seconds before lighting becomes idle.",
+          "dialMode": "Dial mode",
+          "navigate": "Navigate",
+          "scroll": "Scroll",
+          "mappings": "Control mappings",
+          "mappingsDescription": "Map buttons and dial gestures to existing Orca commands.",
+          "filterActions": "Filter actions",
+          "unassigned": "Unassigned",
+          "statusDisabled": "Not in use",
+          "statusDisconnected": "Disconnected",
+          "statusConnecting": "Connecting",
+          "statusConnected": "Connected",
+          "statusReadOnly": "Read-only",
+          "statusConflict": "Device in use",
+          "statusPermission": "Permission required",
+          "statusError": "Device error",
+          "readOnlyDescription": "Inputs work, but output controls are disabled for this firmware.",
+          "connectionDescription": "Connect the Codex Micro by USB to use it with Orca.",
+          "search": {
+            "title": "Codex Micro",
+            "description": "Connect Codex Micro, customize mappings, lighting, brightness, dial behavior, and firmware status."
+          }
         }
       },
       "right": {

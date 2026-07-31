@@ -49,6 +49,7 @@ import { CommitMessageAiPane } from './CommitMessageAiPane'
 import { GitProviderApiBudgetPane } from './GitProviderApiBudgetPane'
 import { NotificationsPane } from './NotificationsPane'
 import { VoicePane } from './VoicePane'
+import { CodexMicroSettingsPane } from './codex-micro/CodexMicroSettingsPane'
 import { SshPane } from './SshPane'
 import { ExperimentalPane } from './ExperimentalPane'
 import { PluginsSettingsSection } from './PluginsSettingsSection'
@@ -1261,6 +1262,30 @@ function Settings(): React.JSX.Element {
                       searchEntries={getSectionSearchEntries('computer-use')}
                     >
                       {isSectionMounted('computer-use') ? <ComputerUsePane /> : null}
+                    </SettingsSection>
+
+                    <SettingsSection
+                      id="codex-micro"
+                      title={translate(
+                        'auto.components.settings.Settings.codexMicroTitle',
+                        'Codex Micro'
+                      )}
+                      description={translate(
+                        'auto.components.settings.Settings.codexMicroDescription',
+                        'Use and customize the Work Louder Codex Micro controller.'
+                      )}
+                      badge={translate(
+                        'auto.components.settings.codexMicro.experimental',
+                        'Experimental'
+                      )}
+                      searchEntries={getSectionSearchEntries('codex-micro')}
+                    >
+                      {isSectionMounted('codex-micro') ? (
+                        <CodexMicroSettingsPane
+                          settings={settings}
+                          updateSettings={updateSettings}
+                        />
+                      ) : null}
                     </SettingsSection>
 
                     <SettingsSection
