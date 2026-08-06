@@ -182,6 +182,7 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     branchPrefix: 'git-username',
     branchPrefixCustom: '',
     enableGitHubAttribution: false,
+    onePasswordSecretsEnabled: false,
     theme: 'system',
     leftSidebarAppearanceMode: 'default',
     leftSidebarTintColor: DEFAULT_LEFT_SIDEBAR_TINT_COLOR,

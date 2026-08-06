@@ -6274,7 +6274,9 @@
           "3ba07f933b": "Connect issue trackers Orca can use to browse tasks and start workspaces with linked context.",
           "70e885705b": "Task providers",
           "1683acbac4": "Connect the source hosts Orca can use for pull requests, merge requests, checks, and review status.",
-          "298c65ecac": "Review providers"
+          "298c65ecac": "Review providers",
+          "secretsHeading": "Secrets",
+          "secretsDescription": "Source credentials for terminal tabs from a secrets manager instead of plaintext files."
         },
         "KagiSessionLinkForm": {
           "92f0b4e472": "Clear",
@@ -8528,7 +8530,9 @@
             "41ccade05c": "gh",
             "b79c21bd42": "github",
             "7166b9090c": "GitHub authentication via the gh CLI.",
-            "f16e41cc72": "GitHub Integration"
+            "f16e41cc72": "GitHub Integration",
+            "onePasswordTitle": "1Password Integration",
+            "onePasswordDescription": "Resolve op:// secret references in tab environment variables via the 1Password CLI."
           }
         },
         "jira": {
@@ -10295,6 +10299,18 @@
           "body": "The terminal daemon was started by an Orca install that no longer exists, so macOS can’t attribute its commands to Orca — Accessibility and Automation grants are silently ignored (osascript fails with error -25211). Restarting the daemon fixes this; running terminal sessions will close.",
           "openManageSessions": "Open Manage Sessions",
           "title": "macOS permission grants aren’t reaching terminals"
+        },
+        "one": {
+          "password": {
+            "integration": {
+              "card": {
+                "description": "Resolve op:// secret references in tab environment variables through the 1Password CLI (op) at launch. Requires the op CLI and its desktop-app integration.",
+                "statusOn": "Enabled",
+                "statusOff": "Disabled",
+                "toggleLabel": "Enable 1Password secret resolution"
+              }
+            }
+          }
         }
       },
       "right": {

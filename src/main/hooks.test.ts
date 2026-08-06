@@ -1,10 +1,10 @@
 /* eslint-disable max-lines -- Why: hook parsing, shell selection, and execution-path regressions are tightly coupled, so these cases stay in one file to preserve the behavior matrix across platforms. */
-import type { Repo } from '../shared/types'
+import type { OrcaHooks, Repo } from '../shared/types'
 import type * as GitRunner from './git/runner'
 
 import { join } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
-import { getDefaultTabsLaunch, parseOrcaYaml } from './hooks'
+import { getDefaultTabCommandTrustContent, getDefaultTabsLaunch, parseOrcaYaml } from './hooks'
 
 // Mock fs and path used by loadHooks
 vi.mock('fs', () => ({
@@ -193,6 +193,34 @@ describe('parseOrcaYaml', () => {
     expect(parseOrcaYaml(yaml)).toEqual({
       scripts: {},
       defaultTabs: [{ title: 'Server', command: 'pnpm dev' }]
+    })
+  })
+
+  it('parses default tab env maps, dropping invalid names and non-string values', () => {
+    const yaml = [
+      'defaultTabs:',
+      '  - title: Claude',
+      '    command: claude',
+      '    env:',
+      '      ANTHROPIC_API_KEY: op://Private/Anthropic/api-key',
+      '      PLAIN_VALUE: hello',
+      '      "BAD NAME": nope',
+      '      NUMERIC: 42',
+      '  - title: NoEnv',
+      '    command: pnpm dev',
+      '    env: []'
+    ].join('\n')
+
+    expect(parseOrcaYaml(yaml)).toEqual({
+      scripts: {},
+      defaultTabs: [
+        {
+          title: 'Claude',
+          command: 'claude',
+          env: { ANTHROPIC_API_KEY: 'op://Private/Anthropic/api-key', PLAIN_VALUE: 'hello' }
+        },
+        { title: 'NoEnv', command: 'pnpm dev' }
+      ]
     })
   })
 
@@ -1815,5 +1843,33 @@ describe('getDefaultTabsLaunch', () => {
       tabs: hooks.defaultTabs,
       runCommands: false
     })
+  })
+})
+
+describe('getDefaultTabCommandTrustContent', () => {
+  it('includes tab env in the trust content so env changes re-prompt trust', () => {
+    const hooks = {
+      scripts: {},
+      defaultTabs: [
+        {
+          title: 'Claude',
+          command: 'claude',
+          env: { ANTHROPIC_API_KEY: 'op://Private/Anthropic/api-key' }
+        }
+      ]
+    } as unknown as OrcaHooks
+
+    const content = getDefaultTabCommandTrustContent(hooks)
+    expect(content).toContain('ANTHROPIC_API_KEY=op://Private/Anthropic/api-key')
+    expect(content).toContain('claude')
+  })
+
+  it('covers env-only tabs that have no command', () => {
+    const hooks = {
+      scripts: {},
+      defaultTabs: [{ title: 'Shell', env: { LD_PRELOAD: '/evil.so' } }]
+    } as unknown as OrcaHooks
+
+    expect(getDefaultTabCommandTrustContent(hooks)).toContain('LD_PRELOAD=/evil.so')
   })
 })

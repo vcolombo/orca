@@ -124,6 +124,7 @@ import {
 import { isRemoteAgentHooksEnabled } from '../../shared/agent-hook-relay'
 import { createTerminalSessionStateSaveFailureMessage } from '../../shared/terminal-session-state-save-failure'
 import { RendererTerminalSerializerReadiness } from './renderer-terminal-serializer-readiness'
+import { maybeWrapStartupCommandWithOpRun } from '../pty/op-run-secret-injection'
 import { readShellStartupEnvVar } from '../pty/shell-startup-env'
 import {
   isTerminalLeafId,
@@ -4591,7 +4592,10 @@ export function registerPtyHandlers(
       deleteRequestedEnvKeys(env, spawnOptions.envToDelete)
       promoteAgentTeamsShimPath(env, requestedAgentTeamsPath)
       if (launchCommand !== undefined) {
-        spawnOptions.command = launchCommand
+        spawnOptions.command = maybeWrapStartupCommandWithOpRun(launchCommand, env, {
+          enabled: getSettings?.()?.onePasswordSecretsEnabled ?? false,
+          connectionId: args.connectionId
+        })
       }
       if (args.commandDelivery !== undefined) {
         spawnOptions.commandDelivery = args.commandDelivery
@@ -6053,7 +6057,10 @@ export function registerPtyHandlers(
           spawnOptions.envToDelete = combinedEnvToDelete
         }
         if (launchCommand !== undefined) {
-          spawnOptions.command = launchCommand
+          spawnOptions.command = maybeWrapStartupCommandWithOpRun(launchCommand, spawnEnv, {
+            enabled: getSettings?.()?.onePasswordSecretsEnabled ?? false,
+            connectionId: args.connectionId
+          })
         }
         if (args.commandDelivery !== undefined) {
           spawnOptions.commandDelivery = args.commandDelivery

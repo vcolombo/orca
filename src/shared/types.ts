@@ -2144,6 +2144,8 @@ export type OrcaDefaultTabTemplate = {
   title?: string
   color?: string
   command?: string
+  /** Values may be 1Password op:// secret references, resolved at spawn via `op run` when the integration is enabled. */
+  env?: Record<string, string>
 }
 
 export type OrcaVmRecipe = {
@@ -2746,6 +2748,8 @@ export type GlobalSettings = {
   branchPrefix: BranchPrefixStrategy
   branchPrefixCustom: string
   enableGitHubAttribution: boolean
+  /** Opt-in: wrap local tab startup commands in `op run` when their env carries 1Password op:// secret references. */
+  onePasswordSecretsEnabled?: boolean
   theme: 'system' | 'dark' | 'light'
   /** Controls the left sidebar surface without changing terminal brightness. */
   leftSidebarAppearanceMode: LeftSidebarAppearanceMode
