@@ -4594,7 +4594,9 @@ export function registerPtyHandlers(
       if (launchCommand !== undefined) {
         spawnOptions.command = maybeWrapStartupCommandWithOpRun(launchCommand, env, {
           enabled: getSettings?.()?.onePasswordSecretsEnabled ?? false,
-          connectionId: args.connectionId
+          connectionId: args.connectionId,
+          // Why: WSL PTYs run a POSIX shell regardless of the win32 host, so metachar commands must still sh -c wrap.
+          platform: codexSelectionTarget.runtime === 'wsl' ? 'linux' : process.platform
         })
       }
       if (args.commandDelivery !== undefined) {
@@ -6059,7 +6061,9 @@ export function registerPtyHandlers(
         if (launchCommand !== undefined) {
           spawnOptions.command = maybeWrapStartupCommandWithOpRun(launchCommand, spawnEnv, {
             enabled: getSettings?.()?.onePasswordSecretsEnabled ?? false,
-            connectionId: args.connectionId
+            connectionId: args.connectionId,
+            // Why: WSL PTYs run a POSIX shell regardless of the win32 host, so metachar commands must still sh -c wrap.
+            platform: codexSelectionTarget.runtime === 'wsl' ? 'linux' : process.platform
           })
         }
         if (args.commandDelivery !== undefined) {
