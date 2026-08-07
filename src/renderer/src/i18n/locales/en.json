@@ -10311,6 +10311,10 @@
               }
             }
           }
+        },
+        "OnePasswordSkillSetupPanel": {
+          "title": "1Password skill",
+          "description": "Teaches agents to use the op CLI for just-in-time secrets without printing values."
         }
       },
       "right": {
