@@ -196,6 +196,25 @@ describe('parseOrcaYaml', () => {
     })
   })
 
+  it('rejects unsafe env keys, oversize values, and caps accepted entries', () => {
+    const bigValue = 'x'.repeat(64 * 1024 + 1)
+    const yaml = [
+      'defaultTabs:',
+      '  - title: Claude',
+      '    command: claude',
+      '    env:',
+      '      __proto__: op://Private/evil/field',
+      '      constructor: nope',
+      `      TOO_BIG: "${bigValue}"`,
+      '      GOOD: keep'
+    ].join('\n')
+
+    expect(parseOrcaYaml(yaml)).toEqual({
+      scripts: {},
+      defaultTabs: [{ title: 'Claude', command: 'claude', env: { GOOD: 'keep' } }]
+    })
+  })
+
   it('parses default tab env maps, dropping invalid names and non-string values', () => {
     const yaml = [
       'defaultTabs:',
@@ -1810,6 +1829,22 @@ describe('getDefaultTabsLaunch', () => {
       scripts: {},
       defaultTabs: [{ title: 'Server', command: 'pnpm dev' }]
     }
+
+    expect(getDefaultTabsLaunch(hooks, makeRepo('skip-by-default'), 'run')).toEqual({
+      tabs: hooks.defaultTabs,
+      runCommands: true
+    })
+    expect(getDefaultTabsLaunch(hooks, makeRepo('run-by-default'), 'skip')).toEqual({
+      tabs: hooks.defaultTabs,
+      runCommands: false
+    })
+  })
+
+  it('treats env-only tabs as shared content requiring the setup decision', () => {
+    const hooks = {
+      scripts: {},
+      defaultTabs: [{ title: 'Shell', env: { ANTHROPIC_API_KEY: 'op://Private/Anthropic/key' } }]
+    } as unknown as OrcaHooks
 
     expect(getDefaultTabsLaunch(hooks, makeRepo('skip-by-default'), 'run')).toEqual({
       tabs: hooks.defaultTabs,
